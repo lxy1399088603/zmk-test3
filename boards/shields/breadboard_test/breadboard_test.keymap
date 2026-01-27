@@ -6,7 +6,7 @@
         compatible = "zmk,keymap";
         default_layer {
             bindings = <
-                &kp BT_CLR  // 按下时输入空格，方便测试
+                &kp SPACE  // 按下时输入空格，方便测试
             >;
         };
     };
