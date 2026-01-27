@@ -1,13 +1,28 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/outputs.h> // 必须包含这个头文件
 
 / {
+    behaviors {
+        // 定义一个名为 "space_out" 的长按/短按行为
+        space_out: space_out {
+            compatible = "zmk,behavior-hold-tap";
+            label = "SPACE_OUTPUT_SWITCH";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <1000>; // 设定长按时间阈值为 500 毫秒
+            bindings = <&out>, <&kp>; // 长按触发第一个(out)，短按触发第二个(kp)
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
         default_layer {
             bindings = <
-                // &kp SPACE  // 按下时输入空格，方便测试
-                &out OUT_BLE  // 先刷这个，短接一次 6 号引脚，强制切换到蓝牙模式
+                // 使用上面定义的行为：
+                // 长按 0.5 秒以上触发 OUT_BLE (强制蓝牙输出)
+                // 短按触发 SPACE (空格)
+                &space_out OUT_BLE SPACE
             >;
         };
     };
