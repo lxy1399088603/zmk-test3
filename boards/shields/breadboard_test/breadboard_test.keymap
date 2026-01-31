@@ -1,14 +1,14 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
-#include <dt-bindings/zmk/bt.h>
 
 / {
     keymap {
         compatible = "zmk,keymap";
         default_layer {
             bindings = <
-                &kp SPACE    // 对应索引 0 (Pin 6)
-                &bt BT_CLR   // 对应索引 1 (Pin 8)
+                &kp A  &kp B  &kp C  // Row 0: 6+20, 6+22, 6+24
+                &kp D  &kp E  &kp F  // Row 1: 8+20, 8+22, 8+24
+                &kp G  &kp H  &kp I  // Row 2: 17+20, 17+22, 17+24
             >;
         };
     };
