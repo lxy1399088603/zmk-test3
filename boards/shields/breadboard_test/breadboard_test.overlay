@@ -9,7 +9,7 @@
 
     trackstick_listener {
         compatible = "zmk,input-listener";
-        device = <&joystick>;
+        device = <&joystick>;·
     };
 
     joystick: joystick {
