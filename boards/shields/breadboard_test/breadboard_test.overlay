@@ -1,6 +1,27 @@
+&adc {
+    status = "okay";
+};
+
 / {
     chosen {
         zmk,kscan = &kscan0;
+    };
+
+    trackstick_listener {
+        compatible = "zmk,input-listener";
+        device = <&joystick>;
+    };
+
+    joystick: joystick {
+        compatible = "zmk,input-behavior-sensor-joystick";
+        #sensor-binding-cells = <0>;
+        
+        io-channels = <&adc 5>, <&adc 0>; 
+        
+        bindings = <&ib_move_x>, <&ib_move_y>;
+        
+        deadzone = <100>;       // 死区：防止静止时鼠标漂移
+        sensitivity = <100>;    // 灵敏度：数值越大移速越快
     };
 
     kscan0: kscan {

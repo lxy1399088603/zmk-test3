@@ -1,6 +1,6 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
-
+#include <dt-bindings/zmk/pointing.h>
 
 / {
     keymap {
@@ -11,7 +11,7 @@
                 &kp TAB  &kp Q  &kp W  &kp E  &kp R  &kp T
                 &kp LSHFT  &kp A  &kp S  &kp D  &kp F  &kp G
                 &kp LCTRL  &kp Z  &kp X  &kp C  &kp V  &kp B
-                &kp GRAVE  &kp LWIN  &kp LALT  &kp DEL  &kp SPACE
+                &kp GRAVE  &kp LWIN  &kp LALT  &kp DEL  &kp SPACE  &mkp MB1
             >;
         };
     };
