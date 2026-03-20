@@ -17,6 +17,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 static int behavior_calc_init(const struct device *dev) {
     calc_engine_init();
+    calc_display_init();
     return 0;
 }
 
@@ -28,11 +29,11 @@ static int on_keymap_binding_pressed(struct zmk_behavior_binding *binding,
     case CALC_TOGGLE:
         if (calc_engine_is_active()) {
             calc_engine_set_active(false);
-            calc_display_hide();
+            calc_display_set_mode(false);
             zmk_keymap_layer_deactivate(CALC_LAYER);
         } else {
             calc_engine_set_active(true);
-            calc_display_show();
+            calc_display_set_mode(true);
             zmk_keymap_layer_activate(CALC_LAYER);
         }
         return ZMK_BEHAVIOR_OPAQUE;
@@ -87,7 +88,7 @@ static int on_keymap_binding_pressed(struct zmk_behavior_binding *binding,
         return ZMK_BEHAVIOR_OPAQUE;
     }
 
-    calc_display_update_content();
+    calc_display_update_calc();
     return ZMK_BEHAVIOR_OPAQUE;
 }
 

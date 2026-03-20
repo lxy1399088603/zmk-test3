@@ -187,7 +187,10 @@ number  → [0-9]+ ('.' [0-9]+)?
 - 表达式区：使用 8px unscii_8 紧凑字体，`LV_LABEL_LONG_SCROLL_CIRCULAR` 滚动
 - 结果区：右对齐，使用 LVGL 默认字体
 - 显示更新通过 `k_work` 提交，线程安全
-- 非计算器模式时恢复 ZMK 默认状态屏幕（`lv_scr_load` 切换回 default_screen）
+- 非计算器模式：显示 `[ CalcPad ]` 标题 + 实时按键名称
+- 单屏双模式架构：同一个 LVGL screen，通过 `calc_display_set_mode()` 切换标题和内容
+- 按键事件监听器（`key_display.c`）使用 ZMK 事件系统捕获 `position_state_changed`
+- 开机延迟 2 秒后自动显示普通模式界面
 
 ---
 
@@ -214,11 +217,14 @@ zmk-test3/
 │   │   ├── calc_engine.h                       # 计算引擎头文件
 │   │   ├── calc_engine.c                       # 计算引擎实现
 │   │   ├── calc_display.h                      # 显示模块头文件
-│   │   └── calc_display.c                      # 显示模块实现
+│   │   ├── calc_display.c                      # 显示模块实现（单屏双模式）
+│   │   ├── key_display.h                       # [新增] 按键事件监听器头文件
+│   │   └── key_display.c                       # [新增] ZMK 事件监听 + 实时按键显示
 │   └── behaviors/
 │       └── behavior_calc.c                     # 自定义 ZMK Behavior
 ├── docs/
-│   └── plan.md                                 # 本文档
+│   ├── plan.md                                 # 本文档
+│   └── test_guide.md                           # [新增] 测试指南
 ├── zephyr/
 │   └── module.yml                              # [更新] 模块注册
 └── build.yaml                                  # [现有]
