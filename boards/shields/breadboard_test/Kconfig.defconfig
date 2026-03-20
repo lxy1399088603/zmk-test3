@@ -1,0 +1,18 @@
+if SHIELD_BREADBOARD_TEST
+
+config ZMK_KEYBOARD_NAME
+    default "CalcPad"
+
+config CUSTOM_CALCULATOR
+    default y
+
+config LV_Z_VDB_SIZE
+    default 64
+
+config LV_DPI_DEF
+    default 148
+
+config LV_FONT_UNSCII_8
+    default y
+
+endif

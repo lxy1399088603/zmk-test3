@@ -1,0 +1,9 @@
+config CUSTOM_CALCULATOR
+    bool "Enable custom calculator module with OLED display"
+    default n
+    depends on ZMK_DISPLAY
+    help
+      Enables the on-board calculator mode. Requires an SSD1306
+      OLED display connected via I2C. When active, key presses
+      are routed through the calculator engine and formulas are
+      rendered on screen.
