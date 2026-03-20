@@ -67,7 +67,7 @@
 ├───────┼───────┼───────┼───────┼───────┤
 │   4   │   5   │   6   │   +   │ NONE  │  Row 2
 ├───────┼───────┼───────┼───────┼───────┤
-│   1   │   2   │   3   │ ENTER │ NONE  │  Row 3
+│   1   │   2   │   3   │   =   │ NONE  │  Row 3
 ├───────┼───────┼───────┼───────┼───────┤
 │   0   │   .   │ NONE  │ ENTER │ NONE  │  Row 4
 └───────┴───────┴───────┴───────┴───────┘
@@ -90,7 +90,7 @@
 | (2,0)-(2,2) | 4 5 6 | `&kp KP_N4` ... |
 | (2,3) | + | `&kp KP_PLUS` |
 | (3,0)-(3,2) | 1 2 3 | `&kp KP_N1` ... |
-| (3,3) | Enter | `&kp KP_ENTER` |
+| (3,3) | = | `&kp EQUAL` |
 | (4,0) | 0 | `&kp KP_N0` |
 | (4,1) | . | `&kp KP_DOT` |
 | (4,3) | Enter | `&kp KP_ENTER` |
@@ -122,39 +122,37 @@
 
 ```
     ┌──────────┐
-    │   IDLE   │ ← 初始状态 / CLEAR
+    │   IDLE   │ ← 初始状态 / CLEAR / RESET
     └────┬─────┘
          │ 输入数字
     ┌────▼─────┐
-    │  INPUT   │ ← 持续输入数字/小数点
+    │  INPUT   │ ← 持续输入数字/小数点/运算符
     └────┬─────┘
-         │ 输入运算符
-    ┌────▼──────┐
-    │ OPERATOR  │ ← 等待第二操作数
-    └────┬──────┘
-         │ 继续输入 → 回到 INPUT
          │ 按 = 求值
     ┌────▼──────┐
     │  RESULT   │ ← 显示结果
     └────┬──────┘
          │ 输入数字 → 回到 INPUT (新表达式)
-         │ 输入运算符 → 回到 OPERATOR (链式计算)
+         │ 输入运算符 → 回到 INPUT (链式计算，结果作为前缀)
     ┌────▼──────┐
-    │   ERROR   │ ← 除零等异常
+    │   ERROR   │ ← 除零/溢出等异常
     └───────────┘
-         │ 任意键 → 回到 IDLE
+         │ 任意输入 → 回到 IDLE
 ```
+
+> 注：实际实现中将 OPERATOR 状态合并进 INPUT，运算符作为表达式字符串的一部分处理，
+> 连续运算符输入时自动替换最后一个运算符。
 
 ### 4.2 计算引擎
 
 **核心设计原则：每个运算操作绑定独立函数**
 
 ```c
-double calc_op_add(double a, double b);  // 加法
-double calc_op_sub(double a, double b);  // 减法
-double calc_op_mul(double a, double b);  // 乘法
-double calc_op_div(double a, double b);  // 除法（除零检查）
-double calc_op_mod(double a, double b);  // 取模
+float calc_op_add(float a, float b);  // 加法
+float calc_op_sub(float a, float b);  // 减法
+float calc_op_mul(float a, float b);  // 乘法
+float calc_op_div(float a, float b);  // 除法（除零检查）
+float calc_op_mod(float a, float b);  // 取模
 // 后续可扩展更多运算符...
 ```
 
@@ -177,19 +175,19 @@ number  → [0-9]+ ('.' [0-9]+)?
 
 ```
 ┌─────────────────────────┐
-│ ◉ CALC MODE             │  状态栏
-├─────────────────────────┤
+│ [ CALC ]                │  标题（lv_label, unscii_8 字体）
+│ -------------------- │  分隔线（lv_label, 文本破折号）
+│ 123+456*789             │  表达式区（lv_label, 滚动模式）
 │                         │
-│ 123+456*789             │  表达式区
-│                         │
-├─────────────────────────┤
-│            = 359,907    │  结果区
+│            = 359907     │  结果区（lv_label, 右对齐）
 └─────────────────────────┘
 ```
 
-- 表达式区：使用 8px 紧凑字体，支持长表达式滚动
-- 结果区：右对齐，较大字号显示
-- 非计算器模式时恢复 ZMK 默认状态显示
+- 标题 + 分隔线：均使用 `lv_label`（避免依赖 LVGL line widget）
+- 表达式区：使用 8px unscii_8 紧凑字体，`LV_LABEL_LONG_SCROLL_CIRCULAR` 滚动
+- 结果区：右对齐，使用 LVGL 默认字体
+- 显示更新通过 `k_work` 提交，线程安全
+- 非计算器模式时恢复 ZMK 默认状态屏幕（`lv_scr_load` 切换回 default_screen）
 
 ---
 
@@ -272,6 +270,10 @@ zmk-test3/
 | 初始化时序 | behavior_init 中初始化显示 | 延迟到首次激活时初始化 |
 | 字体 | 假设字体可用 | 在 Kconfig 中显式启用 lv_font_unscii_8 |
 | 结果格式化 | `%.10g` | `%.7g`（float 精度约 7 位有效数字） |
+| 分隔线实现 | `lv_line_create` | `lv_label` + 文本破折号（避免 line widget 依赖） |
+| module.yml | 缺少 kconfig 字段 | 添加 `kconfig: Kconfig`（Zephyr 3.5 必需） |
+| CMake include | 未包含 ZMK app 路径 | 添加 `target_include_directories(... ${APPLICATION_SOURCE_DIR}/include)` |
+| CBPRINTF | 仅启用 FP_SUPPORT | 添加前置依赖 `CONFIG_CBPRINTF_COMPLETE=y` |
 
 ---
 

@@ -21,7 +21,7 @@
              * ├───────┼──────────┼────────────┼──────────┼───────┤
              * │   4   │    5     │     6      │    +     │ NONE  │
              * ├───────┼──────────┼────────────┼──────────┼───────┤
-             * │   1   │    2     │     3      │  ENTER   │ NONE  │
+             * │   1   │    2     │     3      │    =     │ NONE  │
              * ├───────┼──────────┼────────────┼──────────┼───────┤
              * │   0   │    .     │   NONE     │  ENTER   │ NONE  │
              * └───────┴──────────┴────────────┴──────────┴───────┘ */
@@ -29,7 +29,7 @@
                 &calc CALC_TOGGLE  &kp KP_SLASH  &kp KP_MULTIPLY  &kp BSPC      &kp PRCNT
                 &kp KP_N7          &kp KP_N8     &kp KP_N9        &kp KP_MINUS  &none
                 &kp KP_N4          &kp KP_N5     &kp KP_N6        &kp KP_PLUS   &none
-                &kp KP_N1          &kp KP_N2     &kp KP_N3        &kp KP_ENTER  &none
+                &kp KP_N1          &kp KP_N2     &kp KP_N3        &kp EQUAL     &none
                 &kp KP_N0          &kp KP_DOT    &none            &kp KP_ENTER  &none
             >;
         };
