@@ -8,4 +8,5 @@ if(CONFIG_CUSTOM_CALCULATOR)
     src/behaviors/behavior_calc.c
   )
   zephyr_library_include_directories(src)
+  target_include_directories(custom_calculator PRIVATE ${APPLICATION_SOURCE_DIR}/include)
 endif()

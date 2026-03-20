@@ -11,7 +11,7 @@ static lv_obj_t *calc_screen;
 static lv_obj_t *default_screen;
 static lv_obj_t *title_label;
 static lv_obj_t *expr_label;
-static lv_obj_t *sep_line;
+static lv_obj_t *sep_label;
 static lv_obj_t *result_label;
 static bool display_initialized;
 
@@ -83,12 +83,10 @@ void calc_display_show(void) {
     lv_label_set_text(title_label, "[ CALC ]");
     lv_obj_align(title_label, LV_ALIGN_TOP_LEFT, 2, 2);
 
-    static lv_point_t line_pts[] = {{0, 0}, {124, 0}};
-    sep_line = lv_line_create(calc_screen);
-    lv_line_set_points(sep_line, line_pts, 2);
-    lv_obj_set_style_line_color(sep_line, lv_color_white(), 0);
-    lv_obj_set_style_line_width(sep_line, 1, 0);
-    lv_obj_align(sep_line, LV_ALIGN_TOP_LEFT, 2, 14);
+    sep_label = lv_label_create(calc_screen);
+    lv_obj_add_style(sep_label, &style_title, 0);
+    lv_label_set_text(sep_label, "--------------------");
+    lv_obj_align(sep_label, LV_ALIGN_TOP_LEFT, 2, 13);
 
     expr_label = lv_label_create(calc_screen);
     lv_obj_add_style(expr_label, &style_expr, 0);
@@ -118,7 +116,7 @@ void calc_display_hide(void) {
     }
     title_label = NULL;
     expr_label = NULL;
-    sep_line = NULL;
+    sep_label = NULL;
     result_label = NULL;
     LOG_INF("Calculator display hidden");
 }
